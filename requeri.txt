@@ -1,8 +1,0 @@
-1. Inicializa un proyecto de Node.js: npm init -y
-2. Instala las dependencias necesarias: npm install express jsonwebtoken bcryptjs pg
-    Express.js: Para crear el servidor.requeri.txt
-    jsonwebtoken: Para generar y verificar JWT.
-    bcryptjs: Para encriptar contraseñas.
-    pg: Cliente de PostgreSQL para conectarse a tu base de datos.
-    .env: para almacenar las variables de entorno. Este archivo no debe ser incluido 
-    en el control de versiones (gitignore).
