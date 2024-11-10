@@ -1,10 +1,10 @@
 const express = require('express');
-const db = require('./db');
+const db = require('./conexionDB/db');
 
 const app = express();
 app.use(express.json());
 
-// Ruta de ejemplo para obtener usuarios
+// Ruta para obtener usuarios
 app.get('/users', async (req, res) => {
   try {
     const result = await db.query('SELECT * FROM register');
