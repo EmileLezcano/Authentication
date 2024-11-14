@@ -1,15 +1,13 @@
 const express = require('express');
 const bcrypt = require('bcryptjs');
-
 const jwt = require('jsonwebtoken');
-
 const db = require('./conexionDB/db');
 
 const app = express();
 app.use(express.json());
 
 // Ruta para obtener usuarios
-app.get('/users', async (req, res) => {
+app.get('/users', authenticateToken, async (req, res) => {
   try {
     const result = await db.query('SELECT * FROM register');
     res.status(200).json(result.rows);
@@ -70,6 +68,9 @@ app.post('/login', async (req, res)=>{
     
     // Comprobar contraseña
     const validPassword = await bcrypt.compare(password, user.rows[0].password);
+    if (!validPassword) {
+      return res.status(400).json({ message: 'Contraseña incorrecta'});
+    }
 
     // Generar el token JWT
     const token = jwt.sign({ userId: user.rows[0].id }, secretKey, { expiresIn: '1h'});
@@ -80,6 +81,29 @@ app.post('/login', async (req, res)=>{
     res.status(500).json({ message: 'Server error'});
   }
 });
+
+// Middleware para verificar JWT
+function authenticateToken (req, res, next) {
+  const token = req.header('Authorization')?.replace('Bearer', '');
+  if (!token) {
+    return res.status(401).json({ message: 'Acceso denegado'});
+  }
+
+  try {
+    const verified = jwt.verify(token, secretKey);
+    req.user = verified;
+    next();
+  } catch (err) {
+
+    if (err.name === 'JsonWebTokenError') {
+      return res.status(400).json({ message: 'Token no valido'});
+    } else {
+      console.error('Error inesperado:', err);  // Agregar log de error para depuración
+      return res.status(500).json({ message: 'Server error'});
+    }
+    
+  }
+}
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
