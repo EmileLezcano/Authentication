@@ -122,6 +122,7 @@ app.get('/users', authenticateToken, async (req, res) => {
     }
 });
 
+
 // Seguridad adicional: Validar el origen de las solicitudes
 app.use((req, res, next) => {
     const allowedOrigins = ['http://localhost:3000', 'https://tudominio.com'];
